@@ -69,6 +69,32 @@ def bellman_ford(vertices, edges):
 	return dist, prev, is_cyclic
 
 
+def get_linear_ordering(edges):
+	edges_copy = edges.copy()
+	linear_ordering = []
+	while True:
+		vertex_list = []
+		for (u, v) in edges_copy:
+			vertex_list += [u, v]
+		vertex_list = set(sorted(vertex_list))
+		print(vertex_list)
+		adjacency_index = { v: 0 for v in vertex_list }
+		print(adjacency_index)
+		for (u, v) in edges_copy:
+			adjacency_index[v] += 1
+		v_with_min_outgoing_edges = min(adjacency_index, key=adjacency_index.get)
+		linear_ordering.append(v_with_min_outgoing_edges)
+		edges_to_remove = []
+		for (u, v) in edges_copy:
+			if v_with_min_outgoing_edges in (u, v):
+				edges_to_remove.append((u, v))
+		for (u, v) in edges_to_remove:
+			edges_copy.remove((u, v))
+		if not edges_copy:
+			break
+	return linear_ordering
+
+
 def find_path(prev):
 	def _find_path(val):
 		return [val] if val == 1 else [val] + _find_path(prev[val])
@@ -80,8 +106,12 @@ if __name__ == '__main__':
 	vertices = get_vertices()
 	edges = get_edges()
 	dist, prev, is_cyclic = bellman_ford(vertices, edges)
+	print(vertices, edges)
 	if is_cyclic:
 		print("NO... Graph is cyclic, therefore not a DAG")
+		exit()
+	linear_ordering = get_linear_ordering(edges)
+	print('linear ordering: ', linear_ordering)
 	path = find_path(prev)
 	print(path)
 
