@@ -11,9 +11,11 @@ Submitted Oct 25, 2018
 
 ### To the grader:
 
-Program written in Python 3.7
+Program written in Python 3.
+
 To execute the program, please run the following, with Python 3.x installed:
-python3 dag.py
+
+`python3 dag.py`
 
 
 This program takes as input a directed graph and outputs
@@ -29,7 +31,7 @@ and in the case it is a DAG...
    the names of the vertices will be 1, 2, 3, ..., n.
 - The next few lines will contain the edges of the graph as
    i, j 
-  where 1 <= i <=n and 1 <= j <= n and i != j.
+  where _1 <= i <= n_ and _1 <= j <= n_ and _i != j_.
 
   Example of valid input:
     5
