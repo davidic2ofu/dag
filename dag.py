@@ -4,14 +4,9 @@ import random
 instructions = '''
 
 Programming Assignment 2:
-Directed Acyclic Graphs
+DIRECTED ACYCLIC GRAPHS
 
-This program takes as input a directed graph and outputs
-- 'YES' or 'NO' depending on whether the graph is a DAG
-
-and in the case it is a DAG...
-- a linear ordering of the DAG
-- the length of the longest path in the DAG starting from vertex 1
+This program takes as input a directed graph and outputs information about the graph.
 
 INPUTS
 ======
@@ -27,15 +22,31 @@ INPUTS
     3, 4
     3, 1
 
+OUTPUTS
+=======
+- 'YES' or 'NO' depending on whether the graph is a DAG
+
+and in the case it is a DAG...
+
+- a linear ordering of the DAG
+- the length of the longest path in the DAG starting from vertex 1
+
+
 '''
 
 
 def get_vertices():
+	'''
+	Used for user input of vertices.
+	'''
 	num_vertices = int(input('\nEnter number of vertices: '))
 	return [x for x in range(1, num_vertices + 1)]
 
 
 def get_edges():
+	'''
+	Used for user input of edges.
+	'''
 	edges = set()
 	while True:
 		a = input('\nEnter value of edge: ')
@@ -47,39 +58,42 @@ def get_edges():
 
 
 def bellman_ford(vertices, edges):
+	'''
+	Slight variation of Bellman Ford algorithm, subtracting edge weights instead of
+	adding them.  In doing this, the longest path can be found, and if 'negative'
+	cycles are found using the negative versions of the edge weights in the last
+	loop, that means the graph is cyclic.
+	'''
 	dist = {}
 	prev = {}
 	for v in vertices:
 		dist[v] = 999999
 		prev[v] = None
-	# print('vertices in bf:', dist, prev, edges)
-	# s = vertices[random.randint(0, len(vertices) - 1)]
-	s = 1
+	s = 1    # assumes starting vertex is vertex number 1
 	dist[s] = 0
 	is_cyclic = False
 	for i in range(len(vertices) - 1):
 		for e in edges:
 			u, v = e[0], e[1]
-			if dist[v] > dist[u] + 1:   # subtract 1 to get longest path (add for shortest)
-
-# need better test for back edges, maybe dfs in separate function
-				if dist[v] < 999999: # and dist[u] == 999999: 
-					# need to test for back edges
-
-				# 	path_from_u = set(find_path(prev, u))
-				# 	path_from_v = set(find_path(prev, v))
-				# 	print('PATHS: ', path_from_u, path_from_v)
-				# 	common_vertices = path_from_v.intersection(path_from_u)
-				# 	if len(common_vertices) > 0:
-
-						is_cyclic = True
-				dist[v] = dist[u] + 1
+			if dist[v] > dist[u] - 1:   # subtract 1 to get longest path (add for shortest)
+				dist[v] = dist[u] - 1
 				prev[v] = u
-	print('distances: {}\nprevious: {}\n'.format(dist, prev))
+	# print('distances: {}\nprevious: {}\n'.format(dist, prev))
+	for e in edges:
+		u, v = e[0], e[1]
+		if dist[v] > dist[u] - 1:
+			is_cyclic = True
+
 	return dist, prev, is_cyclic
 
 
 def get_linear_ordering(vertices, edges):
+	'''
+	To get linear ordering, find vertex with minimum number of outgoing edges, add it
+	to the list, remove it from the graph, then repeat (find a new vertex with the
+	minimum number of outgoing edges and so forth) until all vertices have been removed
+	from the graph. 
+	'''
 	vertex_list = vertices.copy()
 	edge_list = edges.copy()
 	linear_ordering = []
@@ -102,9 +116,12 @@ def get_linear_ordering(vertices, edges):
 
 
 def find_path(prev):
+	'''
+	Recursively finds the path using the prev dictionary returned from Bellman Ford
+	'''
 	def _find_path(val):
-		return [val] if val == 1 else [val] + _find_path(prev[val])
-	return _find_path(len(prev))  # assumes last vertex is the highest num in v list
+		return [val] if val == 1 else _find_path(prev[val]) + [val]
+	return _find_path(len(prev))  # assumes destination vertex is the highest num in v list
 
 
 if __name__ == '__main__':
@@ -112,12 +129,13 @@ if __name__ == '__main__':
 	vertices = get_vertices()
 	edges = get_edges()
 	dist, prev, is_cyclic = bellman_ford(vertices, edges)
-	print(vertices, edges)
+	# print(vertices, edges)
 	if is_cyclic:
-		print("NO... Graph is cyclic, therefore not a DAG")
+		print("\nNO ... (Graph is cyclic, therefore not a DAG)")
 		exit()
 	linear_ordering = get_linear_ordering(vertices, edges)
-	print('linear ordering: ', linear_ordering)
+	print('\nLinear ordering: ', linear_ordering)
 	path = find_path(prev)
-	print(path)
+	print('\nLongest path: {}'.format(path))
+	print('\nLength of longest path: {}\n'.format(len(path)))
 

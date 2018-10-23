@@ -6,8 +6,7 @@ Submitted Oct 25, 2018
 
 
 
-# Programming Assignment 2:
-## Directed Acyclic Graphs
+## Programming Assignment 2: Directed Acyclic Graphs
 
 ### To the grader:
 
@@ -17,13 +16,7 @@ To execute the program, please run the following, with Python 3.x installed:
 
 `python3 dag.py`
 
-
-This program takes as input a directed graph and outputs
-- 'YES' or 'NO' depending on whether the graph is a DAG
-
-and in the case it is a DAG...
-- a linear ordering of the DAG
-- the length of the longest path in the DAG starting from vertex 1
+This program takes as input a directed graph and outputs information about the graph.
 
 ### INPUTS
 
@@ -39,6 +32,13 @@ and in the case it is a DAG...
     3, 4
     3, 1
 
+### OUTPUTS
+
+- 'YES' or 'NO' depending on whether the graph is a DAG
+
+and in the case it is a DAG...
+- a linear ordering of the DAG
+- the length of the longest path in the DAG starting from vertex 1
 
 Thank you,
 DR
