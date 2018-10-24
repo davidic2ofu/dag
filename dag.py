@@ -121,14 +121,16 @@ def find_longest_path(prev):
 	Recursively finds the longest path using the prev dictionary returned from Bellman Ford
 	'''
 	def _find_path(val):
-		return [val] if val in [1, 999999, None] else _find_path(prev[val]) + [val]
+		if val in [1, 999999, ]:
+			return [val]
+		if val is None:
+			return []
+		return _find_path(prev[val]) + [val]
 
 	longest_path = []
 	for i in range(len(prev), 0, -1):
 		if i not in longest_path:
 			path = _find_path(i)
-			if None in path:
-				path.remove(None)
 			if len(path) > len(longest_path) and path[0] == 1:
 				longest_path = path
 	return longest_path
@@ -140,11 +142,13 @@ if __name__ == '__main__':
 	edges = get_edges()
 	dist, prev, is_cyclic = bellman_ford(vertices, edges)
 	if is_cyclic:
-		print("\nNO ... (Graph is cyclic, therefore not a DAG)")
+		print("\nNO")
 		exit()
+	else:
+		print("\nYES")
 	linear_ordering = get_linear_ordering(vertices, edges)
 	print('\nLinear ordering: ', linear_ordering)
 	path = find_longest_path(prev)
 	print('\nLongest path starting from vertex 1: {}'.format(path))
-	print('\nLength of longest path starting from vertex 1: {} edges\n'.format(len(path) - 1))
+	print('\nLength of longest path starting from vertex 1: {} vertices ({} edges)\n'.format(len(path), len(path) - 1))
 
