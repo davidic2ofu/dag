@@ -51,6 +51,8 @@ def get_edges():
 	while True:
 		a = input('\nEnter value of edge: ')
 		if not a:
+			if not edges:
+				continue
 			break
 		edge = tuple([int(x.strip(',')) for x in a.split()])
 		edges.add(edge)
@@ -78,7 +80,6 @@ def bellman_ford(vertices, edges):
 			if dist[v] > dist[u] - 1:   # subtract 1 to get longest path (add for shortest)
 				dist[v] = dist[u] - 1
 				prev[v] = u
-	# print('distances: {}\nprevious: {}\n'.format(dist, prev))
 	for e in edges:
 		u, v = e[0], e[1]
 		if dist[v] > dist[u] - 1:
@@ -115,13 +116,22 @@ def get_linear_ordering(vertices, edges):
 	return linear_ordering
 
 
-def find_path(prev):
+def find_longest_path(prev):
 	'''
-	Recursively finds the path using the prev dictionary returned from Bellman Ford
+	Recursively finds the longest path using the prev dictionary returned from Bellman Ford
 	'''
 	def _find_path(val):
-		return [val] if val == 1 else _find_path(prev[val]) + [val]
-	return _find_path(len(prev))  # assumes destination vertex is the highest num in v list
+		return [val] if val in [1, 999999, None] else _find_path(prev[val]) + [val]
+
+	longest_path = []
+	for i in range(len(prev), 0, -1):
+		if i not in longest_path:
+			path = _find_path(i)
+			if None in path:
+				path.remove(None)
+			if len(path) > len(longest_path) and path[0] == 1:
+				longest_path = path
+	return longest_path
 
 
 if __name__ == '__main__':
@@ -129,13 +139,12 @@ if __name__ == '__main__':
 	vertices = get_vertices()
 	edges = get_edges()
 	dist, prev, is_cyclic = bellman_ford(vertices, edges)
-	# print(vertices, edges)
 	if is_cyclic:
 		print("\nNO ... (Graph is cyclic, therefore not a DAG)")
 		exit()
 	linear_ordering = get_linear_ordering(vertices, edges)
 	print('\nLinear ordering: ', linear_ordering)
-	path = find_path(prev)
-	print('\nLongest path: {}'.format(path))
-	print('\nLength of longest path: {}\n'.format(len(path)))
+	path = find_longest_path(prev)
+	print('\nLongest path starting from vertex 1: {}'.format(path))
+	print('\nLength of longest path starting from vertex 1: {} edges\n'.format(len(path) - 1))
 
